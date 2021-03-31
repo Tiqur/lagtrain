@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/Tiqur/lagtrain/issues"
   },
-  "homepage": "https://github.com/Tiqur/lagtrain#readme"
+  "homepage": "https://github.com/Tiqur/lagtrain#readme",
+  "dependencies": {
+    "ffmpeg-static": "^4.2.8",
+    "jpeg-js": "^0.4.3",
+    "pipe2pam": "^0.6.2",
+    "ytdl-core": "^4.5.0"
+  }
 }
