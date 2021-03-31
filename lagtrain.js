@@ -66,8 +66,10 @@ const getFrames = () => {
   // Executes on each frame
   getFrames().on('pam', (data) => {
 
+    const characters = [' ', '░', '▒', '▓', '█']
+
     // Scale grey value ( easier to convert )
-    const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, 5)));
+    const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, characters.length)));
 
     console.log(scaledValues)
     console.log(data);
