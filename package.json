@@ -1,0 +1,19 @@
+{
+  "name": "lagtrain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lagtrain.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tiqur/lagtrain.git"
+  },
+  "author": "Tiqur",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Tiqur/lagtrain/issues"
+  },
+  "homepage": "https://github.com/Tiqur/lagtrain#readme"
+}
