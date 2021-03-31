@@ -46,7 +46,7 @@ const getFrames = () => {
     '-f',
     'image2pipe',
     '-vf',
-    'fps=60,format=gray,scale=640:360',
+    'fps=60,format=gray,scale=384:216',
     '-frames',
     '1000', 
     'pipe:1'
@@ -69,7 +69,7 @@ const getFrames = () => {
     const characters = ['  ', '░░', '▒▒', '▓▓', '██']
 
     // Scale grey value ( easier to convert )
-    const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, characters.length)));
+    const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, characters.length-1)));
 
     const height = data.height;
     const width = data.width;
@@ -92,7 +92,7 @@ const getFrames = () => {
       outputString += '\n';
     }
 
-    console.clear()
+    console.log('\033[1;1H')
     console.log(outputString);
   });
 })();
