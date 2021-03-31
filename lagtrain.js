@@ -20,6 +20,13 @@ const downloadLagtrainVideo = () => {
 }
 
 
+// Convert range from 0-255 to be match character color
+const interpolateRgb = (value, max) => {
+  const scaled = value / 255;
+  return scaled * max;
+}
+
+
 // On data recieve, parse it, and load frame into memory ( faster alternative to saving each frame as an image )
 const getFrames = () => {
   
@@ -58,13 +65,11 @@ const getFrames = () => {
 
   // Executes on each frame
   getFrames().on('pam', (data) => {
-    const rawImageData = {
-      data: data.pixels,
-      width: data.width,
-      height: data.height
-    };
 
-    // fs.writeFileSync('image.jpg', jpeg.encode(rawImageData, 50).data)
+    // Scale grey value ( easier to convert )
+    const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, 5)));
+
+    console.log(scaledValues)
     console.log(data);
   });
 })();
