@@ -71,8 +71,29 @@ const getFrames = () => {
     // Scale grey value ( easier to convert )
     const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, characters.length)));
 
-    console.log(scaledValues)
-    console.log(data);
+    const height = data.height;
+    const width = data.width;
+    let outputString = "";
+
+    // Height
+    for (y = 0; y < height; y++) {
+      
+      // Width
+      for (x = 0; x < width; x++) {
+          const p = y * width + x;
+          const pixelValue = scaledValues[p];
+          const newCharacter = characters[pixelValue];
+
+          // Add character to outputString
+          outputString += newCharacter;
+      }
+      
+      // Add newline
+      outputString += '\n';
+    }
+
+
+    console.log(outputString);
   });
 })();
 
