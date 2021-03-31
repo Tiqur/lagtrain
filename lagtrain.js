@@ -26,7 +26,7 @@ const getFrames = () => {
   // Initialise p2p
   const p2p = new P2P();
 
-  // Get each frame in video using ffmpeg
+  // Get each frame in video using ffmpeg and convert to greyscale
   const fpeg = spawn(ffmpegPath, [    
     '-loglevel',
     'quiet',
@@ -38,10 +38,8 @@ const getFrames = () => {
     'pam',
     '-f',
     'image2pipe',
-    '-pix_fmt',
-    'rgba',
     '-vf',
-    'fps=60,scale=iw:ih',
+    'fps=60,format=gray',
     '-frames',
     '10', 
     'pipe:1'
@@ -61,13 +59,13 @@ const getFrames = () => {
   // Executes on each frame
   getFrames().on('pam', (data) => {
     const rawImageData = {
-        data: data.pixels,
-        width: data.width,
-        height: data.height
+      data: data.pixels,
+      width: data.width,
+      height: data.height
     };
 
     // fs.writeFileSync('image.jpg', jpeg.encode(rawImageData, 50).data)
-    console.log(jpeg.encode(rawImageData, 50).data);
+    console.log(data);
   });
 })();
 
