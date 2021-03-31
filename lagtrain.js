@@ -5,7 +5,7 @@ const ytdl = require('ytdl-core');
 const ffmpegPath = require('ffmpeg-static');
 const { spawn } = require('child_process');
 const P2P = require('pipe2pam');
-const jpeg = require('jpeg-js');
+const { Console } = require('console');
 
 
 // Download Lagtrain video from youtube
@@ -46,9 +46,9 @@ const getFrames = () => {
     '-f',
     'image2pipe',
     '-vf',
-    'fps=60,format=gray',
+    'fps=60,format=gray,scale=640:360',
     '-frames',
-    '10', 
+    '1000', 
     'pipe:1'
   ]);
 
@@ -59,14 +59,14 @@ const getFrames = () => {
 
 // Main function
 (async () => {
+  
   // Download video
   await downloadLagtrainVideo();
-
 
   // Executes on each frame
   getFrames().on('pam', (data) => {
 
-    const characters = [' ', '░', '▒', '▓', '█']
+    const characters = ['  ', '░░', '▒▒', '▓▓', '██']
 
     // Scale grey value ( easier to convert )
     const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, characters.length)));
@@ -92,7 +92,7 @@ const getFrames = () => {
       outputString += '\n';
     }
 
-
+    console.clear()
     console.log(outputString);
   });
 })();
