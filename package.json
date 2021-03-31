@@ -12,6 +12,7 @@
   },
   "author": "Tiqur",
   "license": "MIT",
+  "bin": "./lagtrain.js",
   "bugs": {
     "url": "https://github.com/Tiqur/lagtrain/issues"
   },
