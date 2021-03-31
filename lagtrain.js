@@ -11,14 +11,13 @@ const { Console } = require('console');
 // Download Lagtrain video from youtube
 const downloadLagtrainVideo = () => {
   return new Promise(resolve => {
-    ytdl('https://www.youtube.com/watch?v=UnIhRpIT7nc&ab_channel=%E7%A8%B2%E8%91%89%E6%9B%87')
+    ytdl('https://www.youtube.com/watch?v=UnIhRpIT7nc')
       .pipe(fs.createWriteStream('lagtrain.mp4'))
       .on('close', () => {
           resolve();
       })
   })
 }
-
 
 // Convert range from 0-255 to be match character color
 const interpolateRgb = (value, max) => {
@@ -48,7 +47,7 @@ const getFrames = () => {
     '-vf',
     'fps=60,format=gray,scale=384:216',
     '-frames',
-    '1000', 
+    '100', 
     'pipe:1'
   ]);
 
@@ -63,8 +62,17 @@ const getFrames = () => {
   // Download video
   await downloadLagtrainVideo();
 
+  let frameAverage = 0;
+  let frameCount = 0;
+
+  // Clear console before render
+  console.clear()
+
   // Executes on each frame
   getFrames().on('pam', (data) => {
+    // Benchmarking
+    const startTime = Date.now();
+    frameCount++;
 
     const characters = ['  ', '░░', '▒▒', '▓▓', '██']
 
@@ -74,6 +82,7 @@ const getFrames = () => {
     const height = data.height;
     const width = data.width;
     let outputString = "";
+
 
     // Height
     for (y = 0; y < height; y++) {
@@ -92,8 +101,16 @@ const getFrames = () => {
       outputString += '\n';
     }
 
-    console.log('\033[1;1H')
+    console.log('\033[0;0H')
     console.log(outputString);
+
+    frameAverage+= Date.now() - startTime;
   });
+
+  getFrames().on('finish', () => {
+    console.clear()
+    console.log(frameAverage/frameCount + 'ms'); 
+  })
+
 })();
 
