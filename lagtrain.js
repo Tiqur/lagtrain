@@ -25,7 +25,6 @@ const interpolateRgb = (value, max) => {
   return scaled * max;
 }
 
-
 // On data recieve, parse it, and load frame into memory ( faster alternative to saving each frame as an image )
 const getFrames = () => {
   
@@ -47,13 +46,43 @@ const getFrames = () => {
     '-vf',
     'fps=60,format=gray,scale=384:216',
     '-frames',
-    '300', 
+    '200', 
     'pipe:1'
   ]);
 
   // Pipe data to p2p
   return fpeg.stdout.pipe(p2p);
 }
+
+// Compress row data
+Object.defineProperty(Array.prototype, 'compress', {
+  value: function () {
+      let chunk = [];
+      let count = 1;
+
+      for (let i = 0; i <= this.length; i++) {
+        if (this[i] === this[i+1]) {
+          count += 1;
+        } else {
+          chunk.push({value: this[i], count: count});
+          count = 1;
+        }
+      }
+      return chunk;
+  }
+});
+
+
+// Split pixel buffer into chunks of rows
+Object.defineProperty(Array.prototype, 'chunk', {
+  value: function (size) {
+    const chunks = [];
+    for (var p = 0; p < this.length; p += size) {
+      chunks.push(this.slice(p, p + size));
+    }
+    return chunks;
+  }
+});
 
 
 // Main function
@@ -79,27 +108,32 @@ const getFrames = () => {
     frameCount++;
 
     const characters = ['  ', '░░', '▒▒', '▓▓', '██']
+    const colors = ['\033[91m', '\033[92m', '\033[93m', '\033[94m', '\033[95m', '\033[96m']
+    let colorIndex = 0;
 
     // Scale grey value ( easier to convert )
     const scaledValues = Array.from(data.pixels).map(p => Math.round(interpolateRgb(p, characters.length-1)));
+    const compressedValues = scaledValues.chunk(384).map(e => e.compress());
 
     const height = data.height;
     const width = data.width;
     let outputString = "";
 
-    // Append string for each pixel
-    for (i = 0; i < scaledValues.length; i++) {
+    // // Append string for each pixel
+    let y = 0;
+    compressedValues.forEach(row => {
+      let x = 0;
+      // Render row
+      row.forEach(chunk => {
+        const newCharacter = characters[chunk.value];
+        // outputString += colors[colorIndex++ % colors.length]
+        outputString += '\033[' + `${y};${x*2}H${newCharacter.repeat(chunk.count)}`;
+        x+=chunk.count;
+      })
 
-      // Skip if pixelValue is the same
-      if (previousFrame[i] == scaledValues[i]) continue;
+      y++;
+    })
 
-      const x = i % width;
-      const y = (i - x) / width;
-      const pixelValue = scaledValues[i];
-      const newCharacter = characters[pixelValue];
-
-      outputString += '\033[' + `${y};${x*2}H${newCharacter}`;
-    }
 
     // Render to terminal
     process.stdout.write(outputString);
