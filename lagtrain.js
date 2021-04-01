@@ -87,25 +87,21 @@ const getFrames = () => {
     const width = data.width;
     let outputString = "";
 
+    // Append string for each pixel
+    for (i = 0; i < scaledValues.length; i++) {
 
-    // Height
-    for (y = 0; y < height; y++) {
-      
-      // Width
-      for (x = 0; x < width; x++) {
-          const p = y * width + x;
-          const pixelValue = scaledValues[p];
-          const newCharacter = characters[pixelValue];
+      // Skip if pixelValue is the same
+      if (previousFrame[i] == scaledValues[i]) continue;
 
-          // Skip if pixelValue is the same
-          if (previousFrame[p] == scaledValues[p]) continue;
+      const x = i % width;
+      const y = (i - x) / width;
+      const pixelValue = scaledValues[i];
+      const newCharacter = characters[pixelValue];
 
-          // Add character to outputString
-          outputString += '\033[' + `${y};${x*2}H${newCharacter}`;
-      }
-
+      outputString += '\033[' + `${y};${x*2}H${newCharacter}`;
     }
 
+    // Render to terminal
     process.stdout.write(outputString);
 
     // Write current frame to previousFrame var
