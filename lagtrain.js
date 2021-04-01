@@ -11,7 +11,7 @@ const { Console } = require('console');
 // Download Lagtrain video from youtube
 const downloadLagtrainVideo = () => {
   return new Promise(resolve => {
-    ytdl('https://www.youtube.com/watch?v=UnIhRpIT7nc')
+    ytdl('https://www.youtube.com/watch?v=BY-PEcm-cu0')
       .pipe(fs.createWriteStream('lagtrain.mp4'))
       .on('close', () => {
           resolve();
@@ -62,8 +62,12 @@ const getFrames = () => {
   // Download video
   await downloadLagtrainVideo();
 
+  // Benchmarking
   let frameAverage = 0;
   let frameCount = 0;
+
+  // Hodl previous frame for ( hopefully ) optimized rendering
+  let previousFrame = [];
 
   // Clear console before render
   console.clear()
@@ -93,23 +97,28 @@ const getFrames = () => {
           const pixelValue = scaledValues[p];
           const newCharacter = characters[pixelValue];
 
+          // Skip if pixelValue is the same
+          if (previousFrame[p] == scaledValues[p]) continue;
+
           // Add character to outputString
-          outputString += newCharacter;
+          outputString += '\033[' + `${y};${x*2}H${newCharacter}`;
       }
       
-      // Add newline
-      outputString += '\n';
     }
 
-    console.log('\033[0;0H')
     console.log(outputString);
 
+    // Write current frame to previousFrame var
+    previousFrame = scaledValues;
+
+    // Benchmarking
     frameAverage+= Date.now() - startTime;
   });
 
   getFrames().on('finish', () => {
     console.clear()
-    console.log(frameAverage/frameCount + 'ms'); 
+    console.log(`Average frame render time: ${frameAverage/frameCount}ms`); 
+    console.log(`Average FPS: ${1000/(frameAverage/frameCount)}`); 
   })
 
 })();
