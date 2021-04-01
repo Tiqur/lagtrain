@@ -11,7 +11,7 @@ const { Console } = require('console');
 // Download Lagtrain video from youtube
 const downloadLagtrainVideo = () => {
   return new Promise(resolve => {
-    ytdl('https://www.youtube.com/watch?v=BY-PEcm-cu0')
+    ytdl('https://www.youtube.com/watch?v=UnIhRpIT7nc')
       .pipe(fs.createWriteStream('lagtrain.mp4'))
       .on('close', () => {
           resolve();
@@ -47,7 +47,7 @@ const getFrames = () => {
     '-vf',
     'fps=60,format=gray,scale=384:216',
     '-frames',
-    '100', 
+    '300', 
     'pipe:1'
   ]);
 
@@ -103,10 +103,10 @@ const getFrames = () => {
           // Add character to outputString
           outputString += '\033[' + `${y};${x*2}H${newCharacter}`;
       }
-      
+
     }
 
-    console.log(outputString);
+    process.stdout.write(outputString);
 
     // Write current frame to previousFrame var
     previousFrame = scaledValues;
